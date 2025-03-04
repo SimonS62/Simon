@@ -3,7 +3,6 @@ def mask_card_number(card_number: str) -> str:
     # Проверяем длину номера карты
     if len(card_number) < 16:
         return card_number  # Если номер карты слишком короткий
-
     # Форматируем номер по шаблону: 1234 56** **** 3456
     masked_number = (
         f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"

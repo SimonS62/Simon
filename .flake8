@@ -1,5 +1,5 @@
 
 [flake8]
-max-line-length = 119  # Максимальная длина строки
-exclude = .git,__pycache__  # Исключаемые директории
+max-line-length = 119
+exclude = .git,__pycache__
 

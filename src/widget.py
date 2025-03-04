@@ -1,13 +1,6 @@
 # src/widget.py
 from datetime import datetime
-
-def mask_account_number(account_number: str) -> str:
-    """Маскирует номер банковского счета."""
-    if len(account_number) < 4:
-        return account_number  # Если номер счета слишком короткий
-
-    masked_account = f"**{account_number[-4:]}"
-    return masked_account
+from masks import mask_card_number, mask_account_number
 
 def mask_account_card(card_info: str) -> str:
     """Маскирует номер карты или счета в зависимости от типа."""
@@ -15,11 +8,14 @@ def mask_account_card(card_info: str) -> str:
     card_type = " ".join(parts[:-1])  # Все, кроме последнего элемента
     number = parts[-1]  # Последний элемент - номер
 
-    if card_type.lower() in ["visa", "mastercard", "maestro"]:  # Если это карта
-        masked_number = f"{number[:4]} {number[4:6]}** **** {number[-4:]}"
+    # Список типов карт
+    card_types = ["visa", "mastercard", "maestro", "мир", "american express"]
+
+    if card_type.lower() in card_types:  # Если это карта
+        masked_number = mask_card_number(number)  # Используем функцию маскировки карты
         return f"{card_type} {masked_number}"
     elif card_type.lower() == "счет":  # Если это счет
-        masked_number = f"**{number[-4:]}"
+        masked_number = mask_account_number(number)  # Используем функцию маскировки счета
         return f"{card_type} {masked_number}"
     else:
         return card_info  # Если тип не распознан, возвращаем оригинал
