@@ -37,3 +37,4 @@ warn_return_any = true  # Предупреждение о возврате с т
 exclude = "venv"  # Исключение папки venv
 
 
+
