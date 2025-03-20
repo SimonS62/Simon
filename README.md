@@ -21,3 +21,8 @@ poetry install
 * get_date - преобразует строку с датой в формате 'YYYY-MM-DDTHH:MM:SS' в 'DD.MM.YYYY'.
 * filter_by_state - фильтрует список словарей по статусу операции
 * sort_by_date - сортирует список словарей по дате операции
+
+## Тесты модулей:
+* Модуль masks
+* Модуль widget
+* Модуль processing
