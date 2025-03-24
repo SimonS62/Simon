@@ -47,14 +47,3 @@ def test_mask_account_number():
 
     # Тестирование с номером счета, состоящим из 6 цифр
     assert mask_account_number("123456") == "**456"
-
-
-
-
-
-
-
-
-
-
-

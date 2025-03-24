@@ -20,12 +20,13 @@ def test_mask_account_card():
     assert mask_account_card("Visa") == "Visa"  # Нет номера
     assert mask_account_card("Счет") == "Счет"  # Нет номера
 
-    def test_get_date():
-        # Тестирование преобразования даты
-        assert get_date("2023-10-01T12:30:00") == "01.10.2023"
-        assert get_date("2020-01-15T08:45:00") == "15.01.2020"
-        assert get_date("1999-12-31T23:59:59") == "31.12.1999"
 
-        # Тестирование с некорректной датой (должно вызвать ошибку)
-        with pytest.raises(ValueError):
-            get_date("invalid-date")
+def test_get_date():
+    # Тестирование преобразования даты
+    assert get_date("2023-10-01T12:30:00") == "01.10.2023"
+    assert get_date("2020-01-15T08:45:00") == "15.01.2020"
+    assert get_date("1999-12-31T23:59:59") == "31.12.1999"
+
+    # Тестирование с некорректной датой (должно вызвать ошибку)
+    with pytest.raises(ValueError):
+        get_date("invalid-date")

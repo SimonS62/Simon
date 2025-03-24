@@ -27,4 +27,3 @@ def get_date(date_str: str) -> str:
     """Преобразует строку с датой в формате 'YYYY-MM-DDTHH:MM:SS' в 'DD.MM.YYYY'."""
     date_obj = datetime.fromisoformat(date_str)
     return date_obj.strftime("%d.%m.%Y")
-
