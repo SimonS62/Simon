@@ -28,7 +28,7 @@ def transaction_descriptions(transactions: List[Dict[str, Any]]) -> str:
 
 def card_number_generator(start: int, end: int):
     """
-    Генератор для создания номеров банковских карт в заданном диапазоне.
+    Генератор для создания номеров банковских карт в заданном диапазонe.
 
     :param start: Начальное значение диапазона (включительно).
     :param end: Конечное значение диапазона (включительно).

@@ -44,4 +44,3 @@ pip install generators
 * filter_by_currency - фильтрует список транзакций по заданной валюте.
 * transaction_descriptions - возвращает описания для каждой транзакции.
 * card_number_generator - генератор для создания номеров банковских карт в заданном диапазоне.
- 
