@@ -58,3 +58,56 @@ def test_card_number_generator_single_value():
     generated_numbers = list(card_number_generator(1, 1))
 
     assert generated_numbers == ['0000 0000 0000 0001']
+
+
+def filter_by_currency(transactions, currency):
+    """Фильтрует транзакции по заданной валюте."""
+    return [transaction for transaction in transactions if transaction['currency'] == currency]
+
+
+@pytest.fixture
+def transactions():
+    """Фикстура для генерации тестовых данных."""
+    return [
+        {'id': 1, 'amount': 100, 'currency': 'USD'},
+        {'id': 2, 'amount': 200, 'currency': 'EUR'},
+        {'id': 3, 'amount': 150, 'currency': 'USD'},
+        {'id': 4, 'amount': 300, 'currency': 'JPY'},
+        {'id': 5, 'amount': 50, 'currency': 'EUR'},
+    ]
+
+
+def test_filter_by_currency_usd(transactions):
+    """Тестирование фильтрации по валюте USD."""
+    result = filter_by_currency(transactions, 'USD')
+    expected = [
+        {'id': 1, 'amount': 100, 'currency': 'USD'},
+        {'id': 3, 'amount': 150, 'currency': 'USD'},
+    ]
+    assert result == expected
+
+
+def test_filter_by_currency_eur(transactions):
+    """Тестирование фильтрации по валюте EUR."""
+    result = filter_by_currency(transactions, 'EUR')
+    expected = [
+        {'id': 2, 'amount': 200, 'currency': 'EUR'},
+        {'id': 5, 'amount': 50, 'currency': 'EUR'},
+    ]
+    assert result == expected
+
+
+def test_filter_by_currency_jpy(transactions):
+    """Тестирование фильтрации по валюте JPY."""
+    result = filter_by_currency(transactions, 'JPY')
+    expected = [
+        {'id': 4, 'amount': 300, 'currency': 'JPY'},
+    ]
+    assert result == expected
+
+
+def test_filter_by_currency_nonexistent(transactions):
+    """Тестирование фильтрации по несуществующей валюте."""
+    result = filter_by_currency(transactions, 'GBP')
+    expected = []
+    assert result == expected
