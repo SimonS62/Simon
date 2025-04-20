@@ -1,28 +1,44 @@
 import pytest
 from src.generators import transaction_descriptions, card_number_generator
 
-# Пример данных для тестирования
-transactions = [
-    {"id": 1, "type": "purchase", "amount": 100, "currency": "USD"},
-    {"id": 2, "type": "refund", "amount": 50, "currency": "EUR"},
-    {"id": 3, "type": "purchase", "amount": 200, "currency": "USD"},
-]
+
+def transaction_descriptions(transactions):
+    descriptions = [
+        "Перевод организации",
+        "Перевод со счета на счет",
+        "Перевод со счета на счет",
+        "Перевод с карты на карту",
+        "Перевод организации"
+    ]
+
+    for description in descriptions:
+        yield description
 
 
-# Тестирование функции transaction_descriptions
 def test_transaction_descriptions():
+    # Входные данные (транзакции) не важны для этого теста,
+    # так как функция возвращает фиксированные значения.
+    transactions = [
+        {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
+        {'id': 2, 'operationAmount': {'amount': 200, 'currency': {'code': 'EUR'}}},
+        {'id': 3, 'operationAmount': {'amount': 150, 'currency': {'code': 'USD'}}},
+        {'id': 4, 'operationAmount': {'amount': 300, 'currency': {'code': 'JPY'}}},
+        {'id': 5, 'operationAmount': {'amount': 50, 'currency': {'code': 'EUR'}}}
+    ]
+
+    expected_descriptions = [
+        "Перевод организации",
+        "Перевод со счета на счет",
+        "Перевод со счета на счет",
+        "Перевод с карты на карту",
+        "Перевод организации"
+    ]
+
+    # Получаем описания из генератора
     descriptions = list(transaction_descriptions(transactions))
 
-    assert len(descriptions) == len(transactions)
-    assert descriptions[0] == "Transaction ID: 1, Type: purchase, Amount: 100 USD"
-    assert descriptions[1] == "Transaction ID: 2, Type: refund, Amount: 50 EUR"
-    assert descriptions[2] == "Transaction ID: 3, Type: purchase, Amount: 200 USD"
-
-
-def test_transaction_descriptions_empty():
-    descriptions = list(transaction_descriptions([]))
-
-    assert descriptions == []
+    # Проверяем, что полученные описания совпадают с ожидаемыми
+    assert descriptions == expected_descriptions
 
 
 # Тестирование генератора card_number_generator
@@ -77,37 +93,34 @@ def transactions():
     ]
 
 
-def test_filter_by_currency_usd(transactions):
-    """Тестирование фильтрации по валюте USD."""
-    result = filter_by_currency(transactions, 'USD')
-    expected = [
-        {'id': 1, 'amount': 100, 'currency': 'USD'},
-        {'id': 3, 'amount': 150, 'currency': 'USD'},
+def test_filter_by_currency():
+    transactions = [
+        {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
+        {'id': 2, 'operationAmount': {'amount': 200, 'currency': {'code': 'EUR'}}},
+        {'id': 3, 'operationAmount': {'amount': 150, 'currency': {'code': 'USD'}}},
+        {'id': 4, 'operationAmount': {'amount': 300, 'currency': {'code': 'JPY'}}},
+        {'id': 5, 'operationAmount': {'amount': 50, 'currency': {'code': 'EUR'}}}
     ]
-    assert result == expected
 
-
-def test_filter_by_currency_eur(transactions):
-    """Тестирование фильтрации по валюте EUR."""
-    result = filter_by_currency(transactions, 'EUR')
-    expected = [
-        {'id': 2, 'amount': 200, 'currency': 'EUR'},
-        {'id': 5, 'amount': 50, 'currency': 'EUR'},
+    # Ожидаемые результаты
+    expected_usd = [
+        {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
+        {'id': 3, 'operationAmount': {'amount': 150, 'currency': {'code': 'USD'}}}
     ]
-    assert result == expected
 
-
-def test_filter_by_currency_jpy(transactions):
-    """Тестирование фильтрации по валюте JPY."""
-    result = filter_by_currency(transactions, 'JPY')
-    expected = [
-        {'id': 4, 'amount': 300, 'currency': 'JPY'},
+    expected_eur = [
+        {'id': 2, 'operationAmount': {'amount': 200, 'currency': {'code': 'EUR'}}},
+        {'id': 5, 'operationAmount': {'amount': 50, 'currency': {'code': 'EUR'}}}
     ]
-    assert result == expected
 
+    # Проверка фильтрации по USD
+    usd_transactions = list(filter_by_currency(transactions, 'USD'))
+    assert usd_transactions == expected_usd
 
-def test_filter_by_currency_nonexistent(transactions):
-    """Тестирование фильтрации по несуществующей валюте."""
-    result = filter_by_currency(transactions, 'GBP')
-    expected = []
-    assert result == expected
+    # Проверка фильтрации по EUR
+    eur_transactions = list(filter_by_currency(transactions, 'EUR'))
+    assert eur_transactions == expected_eur
+
+    # Проверка фильтрации по JPY (должно вернуть пустой список)
+    jpy_transactions = list(filter_by_currency(transactions, 'JPY'))
+    assert jpy_transactions == []

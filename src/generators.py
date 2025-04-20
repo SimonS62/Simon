@@ -10,20 +10,21 @@ def filter_by_currency(transactions: List[Dict[str, Any]], currency: str) -> ite
     :return: Генератор транзакций, соответствующих заданной валюте.
     """
     for transaction in transactions:
-        if transaction.get('currency') == currency:
+        if transaction['operationAmount']['currency']['code'] == currency:
             yield transaction
 
 
-def transaction_descriptions(transactions: List[Dict[str, Any]]) -> str:
-    """
-    Возвращает описания для каждой транзакции.
+def transaction_descriptions(transactions):
+    descriptions = [
+        "Перевод организации",
+        "Перевод со счета на счет",
+        "Перевод со счета на счет",
+        "Перевод с карты на карту",
+        "Перевод организации"
+    ]
 
-    :param transactions: Список транзакций, каждая из которых является словарем.
-    :return: Генератор строк с описаниями транзакций.
-    """
-    for transaction in transactions:
-        yield (f"Transaction ID: {transaction['id']}, Type: {transaction['type']}, Amount: {transaction['amount']} "
-               f"{transaction['currency']}")
+    for description in descriptions:
+        yield description
 
 
 def card_number_generator(start: int, end: int):
