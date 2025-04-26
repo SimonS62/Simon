@@ -2,28 +2,14 @@ import pytest
 from src.generators import transaction_descriptions, card_number_generator
 
 
-def transaction_descriptions(transactions):
-    descriptions = [
-        "Перевод организации",
-        "Перевод со счета на счет",
-        "Перевод со счета на счет",
-        "Перевод с карты на карту",
-        "Перевод организации"
-    ]
-
-    for description in descriptions:
-        yield description
-
-
 def test_transaction_descriptions():
-    # Входные данные (транзакции) не важны для этого теста,
-    # так как функция возвращает фиксированные значения.
     transactions = [
-        {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
-        {'id': 2, 'operationAmount': {'amount': 200, 'currency': {'code': 'EUR'}}},
-        {'id': 3, 'operationAmount': {'amount': 150, 'currency': {'code': 'USD'}}},
-        {'id': 4, 'operationAmount': {'amount': 300, 'currency': {'code': 'JPY'}}},
-        {'id': 5, 'operationAmount': {'amount': 50, 'currency': {'code': 'EUR'}}}
+        {'id': 1},  # Ожидаем "Перевод организации"
+        {'id': 2},  # Ожидаем "Перевод со счета на счет"
+        {'id': 3},  # Ожидаем "Перевод со счета на счет"
+        {'id': 4},  # Ожидаем "Перевод с карты на карту"
+        {'id': 5},  # Ожидаем "Перевод организации"
+        {'id': 6}  # Транзакция без описания (не должно быть в выводе)
     ]
 
     expected_descriptions = [
@@ -35,10 +21,10 @@ def test_transaction_descriptions():
     ]
 
     # Получаем описания из генератора
-    descriptions = list(transaction_descriptions(transactions))
+    actual_descriptions = list(transaction_descriptions(transactions))
 
     # Проверяем, что полученные описания совпадают с ожидаемыми
-    assert descriptions == expected_descriptions
+    assert actual_descriptions == expected_descriptions
 
 
 # Тестирование генератора card_number_generator

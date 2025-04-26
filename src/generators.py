@@ -23,8 +23,13 @@ def transaction_descriptions(transactions):
         "Перевод организации"
     ]
 
-    for description in descriptions:
-        yield description
+    for transaction in transactions:
+        # Извлекаем описание из текущего словаря
+        description = transaction.get('description')
+
+        # Если описание существует, возвращаем его
+        if description:
+            yield description
 
 
 def card_number_generator(start: int, end: int):
