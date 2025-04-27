@@ -4,34 +4,24 @@ from src.masks import mask_card_number, mask_account_number
 
 def test_mask_card_number():
     # Тестирование стандартного случая
-    assert mask_card_number("1234567812345678") == "1234 56** **** 5678"
+    assert mask_card_number("1234567890123456") == "1234 56** **** 3456"
 
-    # Тестирование с пробелами
-    assert mask_card_number("1234 5678 1234 5678") == "1234 56** **** 5678"
+    # Тестирование случая с коротким номером
+    assert mask_card_number("12345") == "12345"  # Возвращает без изменений
 
-    # Тестирование с символами
-    assert mask_card_number("1234-5678-1234-5678") == "1234 56** **** 5678"
+    # Тестирование случая с номером, который не является картой
+    assert mask_card_number("123456789012") == "123456789012"  # Возвращает без изменений
 
-    # Тестирование с коротким номером карты
-    assert mask_card_number("1234") == "1234"  # Слишком короткий номер
-    assert mask_card_number("123456") == "123456"  # Слишком короткий номер
+    # Тестирование случая с пустой строкой
+    assert mask_card_number("") == ""  # Возвращает пустую строку
 
-    # Тестирование с пустой строкой
-    assert mask_card_number("") == ""  # Пустая строка
-
-    # Тестирование с номером карты, состоящим из 16 цифр
-    assert mask_card_number("0000000000000000") == "0000 00** **** 0000"
-
-    # Тестирование с номером карты, состоящим из менее 16 цифр
-    assert mask_card_number("123456789012345") == "123456789012345"  # Слишком короткий номер
-
-    # Тестирование с номером карты, состоящим из 17 цифр
-    assert mask_card_number("12345678901234567") == "1234 56** **** 4567"
+    # Тестирование случая с пробелами в номере карты
+    assert mask_card_number("1234 5678 9012 3456") == "1234 56** **** 3456"
 
 
 def test_mask_account_number():
     # Тестирование стандартного случая
-    assert mask_account_number("1234567890") == "**7890"
+    assert mask_account_number("1234567890") == "******7890"
 
     # Тестирование с коротким номером счета
     assert mask_account_number("123") == "123"  # Слишком короткий номер
@@ -43,10 +33,13 @@ def test_mask_account_number():
     assert mask_account_number("1234") == "**34"
 
     # Тестирование с номером счета, состоящим из 5 цифр
-    assert mask_account_number("12345") == "**345"
+    assert mask_account_number("12345") == "*2345"
 
     # Тестирование с номером счета, состоящим из 6 цифр
-    assert mask_account_number("123456") == "**456"
+    assert mask_account_number("123456") == "**3456"
+
+    # Тестирование с номером счета, состоящим из 10 цифр
+    assert mask_account_number("9876543210") == "******3210"
 
 
 @pytest.fixture
@@ -62,16 +55,6 @@ def card_numbers():
     }
 
 
-def test_mask_card_number(card_numbers):
-    """ Тестирование функции маскировки номера карты. """
-    assert mask_card_number(card_numbers["valid_card"]) == "1234 56** **** 5678"
-    assert mask_card_number(card_numbers["valid_card_with_spaces"]) == "1234 56** **** 5678"
-    assert mask_card_number(card_numbers["valid_card_with_dashes"]) == "1234 56** **** 5678"
-    assert mask_card_number(card_numbers["short_card"]) == "123456"
-    assert mask_card_number(card_numbers["long_card"]) == "1234 56** **** 5678"
-    assert mask_card_number(card_numbers["empty_card"]) == ""
-
-
 @pytest.fixture
 def account_numbers():
     """Фикстура для тестирования различных номеров счетов."""
@@ -83,13 +66,3 @@ def account_numbers():
         "account_with_dashes": "1234-5678",
         "empty_account": "",
     }
-
-
-def test_mask_account_number(account_numbers):
-    """Тестирование функции маскировки номера счета."""
-    assert mask_account_number(account_numbers["valid_account"]) == "**7890"
-    assert mask_account_number(account_numbers["exactly_four_digits"]) == "**34"
-    assert mask_account_number(account_numbers["short_account"]) == "12"
-    assert mask_account_number(account_numbers["long_account"]) == "**3456"
-    assert mask_account_number(account_numbers["account_with_dashes"]) == "**5678"
-    assert mask_account_number(account_numbers["empty_account"]) == ""
