@@ -15,14 +15,6 @@ def filter_by_currency(transactions: List[Dict[str, Any]], currency: str) -> ite
 
 
 def transaction_descriptions(transactions):
-    descriptions = [
-        "Перевод организации",
-        "Перевод со счета на счет",
-        "Перевод со счета на счет",
-        "Перевод с карты на карту",
-        "Перевод организации"
-    ]
-
     for transaction in transactions:
         # Извлекаем описание из текущего словаря
         description = transaction.get('description')

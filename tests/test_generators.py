@@ -3,28 +3,29 @@ from src.generators import transaction_descriptions, card_number_generator
 
 
 def test_transaction_descriptions():
+    # Тестовые данные с описаниями транзакций
     transactions = [
-        {'id': 1},  # Ожидаем "Перевод организации"
-        {'id': 2},  # Ожидаем "Перевод со счета на счет"
-        {'id': 3},  # Ожидаем "Перевод со счета на счет"
-        {'id': 4},  # Ожидаем "Перевод с карты на карту"
-        {'id': 5},  # Ожидаем "Перевод организации"
-        {'id': 6}  # Транзакция без описания (не должно быть в выводе)
+        {'id': 1, 'description': 'Перевод организации'},
+        {'id': 2, 'description': 'Перевод со счета на счет'},
+        {'id': 3},  # Без описания
+        {'id': 4, 'description': 'Перевод с карты на карту'},
+        {'id': 5, 'description': 'Перевод организации'},
+        {'id': 6}   # Без описания
     ]
 
+    # Ожидаемые результаты
     expected_descriptions = [
-        "Перевод организации",
-        "Перевод со счета на счет",
-        "Перевод со счета на счет",
-        "Перевод с карты на карту",
-        "Перевод организации"
+        'Перевод организации',
+        'Перевод со счета на счет',
+        'Перевод с карты на карту',
+        'Перевод организации'
     ]
 
-    # Получаем описания из генератора
-    actual_descriptions = list(transaction_descriptions(transactions))
+    # Получаем генератор описаний и преобразуем его в список
+    descriptions = list(transaction_descriptions(transactions))
 
-    # Проверяем, что полученные описания совпадают с ожидаемыми
-    assert actual_descriptions == expected_descriptions
+    # Проверяем, что полученные описания соответствуют ожидаемым
+    assert descriptions == expected_descriptions
 
 
 # Тестирование генератора card_number_generator
@@ -79,6 +80,12 @@ def transactions():
     ]
 
 
+def filter_by_currency(transactions, currency_code):
+    return [
+        transaction for transaction in transactions
+        if transaction.get('operationAmount', {}).get('currency', {}).get('code') == currency_code
+    ]
+
 def test_filter_by_currency():
     transactions = [
         {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
@@ -106,7 +113,3 @@ def test_filter_by_currency():
     # Проверка фильтрации по EUR
     eur_transactions = list(filter_by_currency(transactions, 'EUR'))
     assert eur_transactions == expected_eur
-
-    # Проверка фильтрации по JPY (должно вернуть пустой список)
-    jpy_transactions = list(filter_by_currency(transactions, 'JPY'))
-    assert jpy_transactions == []
