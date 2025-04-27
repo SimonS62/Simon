@@ -1,5 +1,5 @@
 import pytest
-from src.generators import transaction_descriptions, card_number_generator
+from src.generators import transaction_descriptions, card_number_generator, filter_by_currency
 
 
 def test_transaction_descriptions():
@@ -63,11 +63,6 @@ def test_card_number_generator_single_value():
     assert generated_numbers == ['0000 0000 0000 0001']
 
 
-def filter_by_currency(transactions, currency):
-    """Фильтрует транзакции по заданной валюте."""
-    return [transaction for transaction in transactions if transaction['currency'] == currency]
-
-
 @pytest.fixture
 def transactions():
     """Фикстура для генерации тестовых данных."""
@@ -80,12 +75,6 @@ def transactions():
     ]
 
 
-def filter_by_currency(transactions, currency_code):
-    return [
-        transaction for transaction in transactions
-        if transaction.get('operationAmount', {}).get('currency', {}).get('code') == currency_code
-    ]
-
 def test_filter_by_currency():
     transactions = [
         {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
@@ -94,7 +83,6 @@ def test_filter_by_currency():
         {'id': 4, 'operationAmount': {'amount': 300, 'currency': {'code': 'JPY'}}},
         {'id': 5, 'operationAmount': {'amount': 50, 'currency': {'code': 'EUR'}}}
     ]
-
     # Ожидаемые результаты
     expected_usd = [
         {'id': 1, 'operationAmount': {'amount': 100, 'currency': {'code': 'USD'}}},
