@@ -1,27 +1,26 @@
 import json
 import os
-from external_api import convert_to_rub
 
 
 def load_transactions(file_path):
     """
-    Загружает данные о финансовых транзакциях из JSON-файла.
+    Загружает транзакции из указанного файла JSON.
 
-    :param file_path: Путь к JSON-файлу.
-    :return: Список словарей с данными о транзакциях или пустой список.
+    :param file_path: Путь к файлу JSON.
+    :return: Список словарей с транзакциями или пустой список.
     """
     if not os.path.exists(file_path):
-        return []
+        return []  # Файл не найден, возвращаем пустой список
 
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
             if isinstance(data, list):
-                return data
+                return data  # Возвращаем данные, если это список
             else:
-                return []
-    except (json.JSONDecodeError, IOError):
-        return []
+                return []  # Если данные не являются списком, возвращаем пустой список
+    except (json.JSONDecodeError, ValueError):
+        return []  # Если произошла ошибка при декодировании JSON или другие ошибки, возвращаем пустой список
 
 
 # Укажите путь к файлу operations.json
@@ -33,15 +32,3 @@ transactions = load_transactions(file_path)
 # Вывод загруженных транзакций
 print(transactions)
 
-
-def get_transaction_amount_in_rub(transaction):
-    """
-    Возвращает сумму транзакции в рублях.
-
-    :param transaction: Словарь с данными о транзакции.
-    :return: Сумма транзакции в рублях (float).
-    """
-    amount = transaction.get('amount', 0)
-    currency = transaction.get('currency', 'RUB')
-
-    return convert_to_rub(amount, currency)

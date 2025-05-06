@@ -1,38 +1,70 @@
-import pytest
-from unittest.mock import patch
-from external_api import convert_to_rub
+import unittest
+from unittest.mock import patch, Mock
+from src.external_api import convert_to_rub
 
 
-def test_convert_to_rub():
-    amount = 100
-    currency = 'USD'
+    def test_convert_to_rub(self, mock_getenv, mock_get):
+        # Настройка mock для переменной окружения API_KEY
+        mock_getenv.return_value = 'fake_api_key'
 
-    # Используем patch для замены requests.get
-    with patch('external_api.requests.get') as mock_get:
-        # Настраиваем mock-объект, чтобы он возвращал нужный ответ
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
+        # Настройка mock для ответа API
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
             'rates': {
-                'USD': 75.0  # Предположим, что курс USD к RUB равен 75
+                'USD': 75.0,
+                'EUR': 85.0
             }
         }
+        mock_get.return_value = mock_response
 
-        result = convert_to_rub(amount, currency)
+        # Тестирование конвертации из USD в RUB
+        amount_in_rub = convert_to_rub(100, 'USD')
+        self.assertAlmostEqual(amount_in_rub, 7500.0)  # 100 * 75.0
 
-        assert result == amount / 75.0  # Проверяем правильность конвертации
+
+    def test_convert_to_rub_api_key_not_found(self, mock_getenv, mock_get):
+        # Настройка mock для отсутствия API_KEY
+        mock_getenv.return_value = None
+
+        with self.assertRaises(ValueError) as context:
+            convert_to_rub(100, 'USD')
+
+        self.assertEqual(str(context.exception), "API ключ не найден. Убедитесь, что он указан в файле .env.")
 
 
-def test_convert_to_rub_invalid_currency():
-    amount = 100
-    currency = 'INVALID'
+    def test_convert_to_rub_invalid_currency(self, mock_getenv, mock_get):
+        # Настройка mock для переменной окружения API_KEY
+        mock_getenv.return_value = 'fake_api_key'
 
-    with patch('external_api.requests.get') as mock_get:
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
+        # Настройка mock для ответа API с отсутствующим курсом валюты
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
             'rates': {}
         }
+        mock_get.return_value = mock_response
 
-        with pytest.raises(ValueError) as excinfo:
-            convert_to_rub(amount, currency)
+        with self.assertRaises(ValueError) as context:
+            convert_to_rub(100, 'GBP')  # GBP не существует в rates
 
-        assert str(excinfo.value) == "Курс для INVALID не найден."
+        self.assertEqual(str(context.exception), "Курс для GBP не найден.")
+
+
+    def test_convert_to_rub_api_error(self, mock_getenv, mock_get):
+        # Настройка mock для переменной окружения API_KEY
+        mock_getenv.return_value = 'fake_api_key'
+
+        # Настройка mock для ошибки API (например, статус код не 200)
+        mock_response = Mock()
+        mock_response.status_code = 500
+        mock_get.return_value = mock_response
+
+        with self.assertRaises(Exception) as context:
+            convert_to_rub(100, 'USD')
+
+        self.assertEqual(str(context.exception), "Ошибка при обращении к API.")
+
+
+if __name__ == '__main__':
+    unittest.main()
