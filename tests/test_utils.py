@@ -18,4 +18,3 @@ class TestLoadTransactions(unittest.TestCase):
             assert len(transactions) == 2
             assert transactions[0]['amount'] == 100
             assert transactions[1]['currency'] == 'EUR'
-

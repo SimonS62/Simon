@@ -1,69 +1,61 @@
 import unittest
-from unittest.mock import patch, Mock
-from src.external_api import convert_to_rub
+from unittest.mock import patch
+from src.external_api import convert_to_rub, process_transaction
 
 
-    def test_convert_to_rub(self, mock_getenv, mock_get):
-        # Настройка mock для переменной окружения API_KEY
-        mock_getenv.return_value = 'fake_api_key'
+class TestExternalAPI(unittest.TestCase):
 
-        # Настройка mock для ответа API
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            'rates': {
-                'USD': 75.0,
-                'EUR': 85.0
-            }
+    @patch('external_api.requests.get')
+    def test_convert_to_rub_success(self, mock_get):
+        # Настройка мок-ответа
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {
+            "result": 7500.0
         }
-        mock_get.return_value = mock_response
 
-        # Тестирование конвертации из USD в RUB
-        amount_in_rub = convert_to_rub(100, 'USD')
-        self.assertAlmostEqual(amount_in_rub, 7500.0)  # 100 * 75.0
+        result = convert_to_rub(100, 'USD')
+        self.assertEqual(result, 7500.0)
 
+    @patch('external_api.requests.get')
+    def test_convert_to_rub_invalid_currency(self, mock_get):
+        # Настройка мок-ответа для случая с некорректной валютой
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {}
 
-    def test_convert_to_rub_api_key_not_found(self, mock_getenv, mock_get):
-        # Настройка mock для отсутствия API_KEY
-        mock_getenv.return_value = None
+        result = convert_to_rub(100, 'INVALID')
+        self.assertIsNone(result)
 
-        with self.assertRaises(ValueError) as context:
-            convert_to_rub(100, 'USD')
+    @patch('external_api.requests.get')
+    def test_convert_to_rub_api_error(self, mock_get):
+        # Настройка мок-ответа для ошибки API
+        mock_get.side_effect = Exception("API Error")
 
-        self.assertEqual(str(context.exception), "API ключ не найден. Убедитесь, что он указан в файле .env.")
+        result = convert_to_rub(100, 'USD')
+        self.assertIsNone(result)
 
+    @patch('external_api.convert_to_rub')
+    def test_process_transaction_usd(self, mock_convert):
+        mock_convert.return_value = 7500.0
 
-    def test_convert_to_rub_invalid_currency(self, mock_getenv, mock_get):
-        # Настройка mock для переменной окружения API_KEY
-        mock_getenv.return_value = 'fake_api_key'
+        transaction = {'amount': 100, 'currency': 'USD'}
+        result = process_transaction(transaction)
 
-        # Настройка mock для ответа API с отсутствующим курсом валюты
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            'rates': {}
-        }
-        mock_get.return_value = mock_response
+        self.assertEqual(result, 7500.0)
 
-        with self.assertRaises(ValueError) as context:
-            convert_to_rub(100, 'GBP')  # GBP не существует в rates
+    @patch('external_api.convert_to_rub')
+    def test_process_transaction_eur(self, mock_convert):
+        mock_convert.return_value = 8500.0
 
-        self.assertEqual(str(context.exception), "Курс для GBP не найден.")
+        transaction = {'amount': 100, 'currency': 'EUR'}
+        result = process_transaction(transaction)
 
+        self.assertEqual(result, 8500.0)
 
-    def test_convert_to_rub_api_error(self, mock_getenv, mock_get):
-        # Настройка mock для переменной окружения API_KEY
-        mock_getenv.return_value = 'fake_api_key'
+    def test_process_transaction_rub(self):
+        transaction = {'amount': 5000, 'currency': 'RUB'}
+        result = process_transaction(transaction)
 
-        # Настройка mock для ошибки API (например, статус код не 200)
-        mock_response = Mock()
-        mock_response.status_code = 500
-        mock_get.return_value = mock_response
-
-        with self.assertRaises(Exception) as context:
-            convert_to_rub(100, 'USD')
-
-        self.assertEqual(str(context.exception), "Ошибка при обращении к API.")
+        self.assertEqual(result, 5000.0)
 
 
 if __name__ == '__main__':
