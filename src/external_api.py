@@ -5,6 +5,7 @@ import os
 # Загружаем переменные окружения из файла .env
 load_dotenv()
 
+
 def convert_to_rub(amount, currency):
     """
     Конвертирует указанную сумму из заданной валюты в рубли (RUB).

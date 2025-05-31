@@ -1,4 +1,3 @@
-import logging
 from logger_config import setup_module_logger
 
 # Создаем логер для модуля masks
