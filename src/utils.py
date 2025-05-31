@@ -1,5 +1,38 @@
 import json
 import os
+import logging
+
+# Создаем логер для модуля utils
+logger_utils = logging.getLogger('utils')
+
+# Настраиваем обработчик файла
+file_handler = logging.FileHandler('utils.log', encoding='utf-8')
+
+# Создаем форматер с нужным форматом
+file_formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Назначаем форматер обработчику
+file_handler.setFormatter(file_formatter)
+
+# Добавляем обработчик к логеру
+logger_utils.addHandler(file_handler)
+
+# Устанавливаем уровень логирования не ниже DEBUG
+logger_utils.setLevel(logging.DEBUG)
+
+# Теперь внутри функций модуля используйте logger_utils для логирования
+
+
+def some_function():
+    try:
+        # успешное выполнение функции
+        logger_utils.info("Функция some_function выполнена успешно.")
+        # код функции...
+    except Exception as e:
+        # ошибка при выполнении функции
+        logger_utils.error(f"Ошибка в some_function: {e}")
 
 
 def load_transactions(file_path):
