@@ -3,11 +3,15 @@ import os
 
 
 def setup_module_logger(module_name):
+    # формируем путь до logs относительно текущего модуля
+    current_dir = os.path.dirname(__file__)
+    logs_dir = os.path.join(current_dir, 'logs')
+
     # Создаем папку logs, если не существует
-    os.makedirs('logs', exist_ok=True)
+    os.makedirs(logs_dir, exist_ok=True)
 
     # Путь к файлу логов для этого модуля
-    log_file_path = os.path.join('logs', f'{module_name}.log')
+    log_file_path = os.path.join(logs_dir, f'{module_name}.log')
 
     # Получаем или создаем логгер по имени модуля
     logger = logging.getLogger(module_name)
