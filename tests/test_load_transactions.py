@@ -1,5 +1,4 @@
-import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import pandas as pd
 
 # Импортируем функции из модуля
