@@ -25,6 +25,7 @@ def read_transactions_xlsx(file_path):
     """
     try:
         df = pd.read_excel(file_path)
+        df = pd.read_csv(file_path, sep=';')
         # Преобразуем DataFrame в список словарей
         transactions = df.to_dict(orient='records')
         return transactions
