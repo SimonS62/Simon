@@ -4,14 +4,14 @@ from src.widget import mask_account_card, get_date
 
 def test_mask_account_card():
     # Тестирование маскировки номера карты
-    assert mask_account_card("Visa 1234567812345678") == "visa 1234 56** **** 5678"
-    assert mask_account_card("MasterCard 1234567812345678") == "mastercard 1234 56** **** 5678"
-    assert mask_account_card("Maestro 1234567812345678") == "maestro 1234 56** **** 5678"
-    assert mask_account_card("Мир 1234567812345678") == "мир 1234 56** **** 5678"
-    assert mask_account_card("American Express 1234567812345678") == "american express 1234 56** **** 5678"
+    assert mask_account_card("Visa 1234567812345678") == "Visa 1234 56** **** 5678"
+    assert mask_account_card("MasterCard 1234567812345678") == "MasterCard 1234 56** **** 5678"
+    assert mask_account_card("Maestro 1234567812345678") == "Maestro 1234 56** **** 5678"
+    assert mask_account_card("Мир 1234567812345678") == "Мир 1234 56** **** 5678"
+    assert mask_account_card("American Express 1234567812345678") == "American Express 1234 56** **** 5678"
 
     # Тестирование маскировки номера счета
-    assert mask_account_card("Счет 1234567890") == "счет **7890"
+    assert mask_account_card("Счет 1234567890") == "Счет ******7890"
 
     # Тестирование с нераспознанным типом
     assert mask_account_card("UnknownType 1234567890") == "UnknownType 1234567890"
