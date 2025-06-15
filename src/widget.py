@@ -1,6 +1,8 @@
 # src/widget.py
 from datetime import datetime
-from masks import mask_card_number, mask_account_number
+
+from src.masks import mask_account_number, mask_card_number
+
 
 def mask_account_card(card_info: str) -> str:
     """Маскирует номер карты или счета в зависимости от типа."""
@@ -19,6 +21,7 @@ def mask_account_card(card_info: str) -> str:
         return f"{card_type} {masked_number}"
     else:
         return card_info  # Если тип не распознан, возвращаем оригинал
+
 
 def get_date(date_str: str) -> str:
     """Преобразует строку с датой в формате 'YYYY-MM-DDTHH:MM:SS' в 'DD.MM.YYYY'."""
